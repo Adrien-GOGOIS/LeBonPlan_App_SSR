@@ -4,6 +4,15 @@ const path = require("path");
 
 const handlebars = require("express-handlebars");
 
+const dotenv = require("dotenv");
+dotenv.config({
+  path: "./config.env",
+});
+
+const { Pool } = require("pg");
+
+const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+
 // Middleware
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
