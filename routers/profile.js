@@ -8,6 +8,10 @@ const app = express();
 app.use(cookieParser());
 const handlebars = require("express-handlebars");
 
+const { Pool } = require("pg");
+
+const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+
 // handlebars
 app.engine("handlebars", handlebars.engine());
 app.set("view engine", "handlebars");
@@ -15,7 +19,7 @@ app.set("view engine", "handlebars");
 // Code serveur
 const secret = process.env.SERVER_CODE;
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
     jwt.verify(req.cookies.jwtCookie, secret);
   } catch (err) {
@@ -24,15 +28,20 @@ router.get("/", (req, res) => {
       message: "Unauthorized",
     });
   }
-  // if (!token) {
-  //     return res.redirect("login");
-  //   }
-  //   const userData = await Postgres.query(
-  //     "SELECT * FROM users WHERE users.username=$1",
-  //     [req.body.username]
-  //   )
-  //   res.render("profile", { username: userData.row[0].username });
-  res.render("profile");
+
+  if (!req.cookies.jwtCookie) {
+    return res.redirect("login");
+  }
+
+  // On vérifie que ce token contient bien l'ID d'un utilisateur admin
+  const decoded = jwt.verify(req.cookies.jwtCookie, secret);
+
+  const userData = await Postgres.query(
+    "SELECT * FROM users WHERE users.user_id=$1",
+    [decoded.id]
+  );
+
+  res.render("profile", { username: userData.rows[0].username });
 });
 
 module.exports = router;
