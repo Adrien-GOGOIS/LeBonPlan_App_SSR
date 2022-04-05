@@ -14,11 +14,7 @@ app.set("view engine", "handlebars");
 
 // PostGres
 const { Pool } = require("pg");
-const { createCipheriv } = require("crypto");
 const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
-
-// Code serveur
-const secret = process.env.SERVER_CODE;
 
 // MIDDLEWARES
 app.use(express.json());

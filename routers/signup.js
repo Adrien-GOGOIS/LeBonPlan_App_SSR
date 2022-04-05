@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
-const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
@@ -11,6 +10,9 @@ const handlebars = require("express-handlebars");
 // PostGres
 const { Pool } = require("pg");
 const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+
+// Code serveur
+const secret = process.env.SERVER_CODE;
 
 // handlebars
 app.engine("handlebars", handlebars.engine());
@@ -28,7 +30,6 @@ router.post("/", async (req, res) => {
   // Hashage password
   const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
-  console.log(req.body.username, hashedPassword);
   // Création user
   try {
     await Postgres.query(
@@ -36,9 +37,18 @@ router.post("/", async (req, res) => {
       [req.body.username, hashedPassword]
     );
 
-    res.json({
-      message: `Student ${req.body.username} added to data base`,
+    const usr = await Postgres.query(
+      "SELECT * FROM users WHERE users.username=$1",
+      [req.body.username]
+    );
+
+    const token = jwt.sign({ id: usr.rows[0].user_id }, secret);
+    res.cookie("jwtCookie", token, {
+      expires: new Date(Date.now() + 1000 * 60 * 60), // Expiration du token à 1h
+      httpOnly: true,
+      secure: false,
     });
+    res.redirect("/profile");
   } catch (err) {
     console.log(err);
     res.status(400).json({
