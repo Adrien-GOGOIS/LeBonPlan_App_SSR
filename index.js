@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 
 const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 const handlebars = require("express-handlebars");
 

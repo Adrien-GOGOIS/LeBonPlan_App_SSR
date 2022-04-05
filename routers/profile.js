@@ -3,7 +3,9 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const app = express();
+// MIDDLEWARES
 
+app.use(cookieParser());
 const handlebars = require("express-handlebars");
 
 // handlebars
@@ -13,14 +15,11 @@ app.set("view engine", "handlebars");
 // Code serveur
 const secret = process.env.SERVER_CODE;
 
-// MIDDLEWARES
-app.use(express.json());
-app.use(cookieParser());
-
-router.get("/", async (req, res) => {
+router.get("/", (req, res) => {
   try {
     jwt.verify(req.cookies.jwtCookie, secret);
   } catch (err) {
+    console.log(err);
     return res.status(401).json({
       message: "Unauthorized",
     });
