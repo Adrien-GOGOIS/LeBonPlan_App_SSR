@@ -15,13 +15,15 @@ app.set("view engine", "handlebars");
 // Import router
 const users = require("./routers/users.js");
 const products = require("./routers/products.js");
+const login = require("./routers/login.js");
+const signup = require("./routers/signup.js");
+const profile = require("./routers/profile.js");
 
 // Routes de l'API
 app.use("/users", users);
-app.use("/profile", users);
-app.use("/login", users);
-app.use("/signup", users);
-app.use("/users", users);
+app.use("/profile", profile);
+app.use("/login", login);
+app.use("/signup", signup);
 app.use("/products", products);
 
 app.get("/", (req, res) => {

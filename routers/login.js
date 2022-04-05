@@ -13,7 +13,11 @@ app.set("view engine", "handlebars");
 app.use(express.json());
 
 router.get("/", (req, res) => {
-  res.render("users");
+  res.render("login");
+});
+
+router.post("/", (req, res) => {
+  res.redirect("profile");
 });
 
 module.exports = router;
