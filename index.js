@@ -12,36 +12,20 @@ app.use(express.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars.engine());
 app.set("view engine", "handlebars");
 
+// Import router
+const users = require("./routers/users.js");
+const products = require("./routers/products.js");
+
+// Routes de l'API
+app.use("/users", users);
+app.use("/profile", users);
+app.use("/login", users);
+app.use("/signup", users);
+app.use("/users", users);
+app.use("/products", products);
+
 app.get("/", (req, res) => {
   res.render("homepage");
-});
-
-app.get("/profile", (req, res) => {
-  res.render("profile");
-});
-
-app.get("/users", (req, res) => {
-  res.render("users");
-});
-
-app.get("/products", (req, res) => {
-  res.render("products");
-});
-
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.get("/signup", (req, res) => {
-  res.render("signup");
-});
-
-app.post("/login", (req, res) => {
-  res.redirect("/profile");
-});
-
-app.post("/signup", (req, res) => {
-  res.redirect("/");
 });
 
 app.listen(8000, () => console.log("Listen on port 8000"));
