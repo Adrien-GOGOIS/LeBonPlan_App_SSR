@@ -30,7 +30,31 @@ app.use(cookieParser());
 let log = false;
 let name = "";
 
-async function isLoggedIn(req, res, next) {
+// handlebars
+app.engine("handlebars", handlebars.engine());
+app.set("view engine", "handlebars");
+
+// Import router
+const users = require("./routers/users.js");
+const products = require("./routers/products.js");
+const login = require("./routers/login.js");
+const signup = require("./routers/signup.js");
+const profile = require("./routers/profile.js");
+const logout = require("./routers/logout");
+
+// Routes de l'API
+app.use("/users", users);
+app.use("/profile", profile);
+app.use("/login", login);
+app.use("/signup", signup);
+app.use("/products", products);
+app.use("/logout", logout);
+
+app.get("/", async (req, res) => {
+  if (!req.cookies.jwtCookie) {
+    return res.render("homepage", { isLoggedIn: log, username: name });
+  }
+
   try {
     jwt.verify(req.cookies.jwtCookie, secret);
   } catch (err) {
@@ -49,29 +73,6 @@ async function isLoggedIn(req, res, next) {
     log = true;
     name = userData.rows[0].username;
   }
-
-  next();
-}
-
-// handlebars
-app.engine("handlebars", handlebars.engine());
-app.set("view engine", "handlebars");
-
-// Import router
-const users = require("./routers/users.js");
-const products = require("./routers/products.js");
-const login = require("./routers/login.js");
-const signup = require("./routers/signup.js");
-const profile = require("./routers/profile.js");
-
-// Routes de l'API
-app.use("/users", users);
-app.use("/profile", profile);
-app.use("/login", login);
-app.use("/signup", signup);
-app.use("/products", products);
-
-app.get("/", isLoggedIn, (req, res) => {
   res.render("homepage", { isLoggedIn: log, username: name });
 });
 
