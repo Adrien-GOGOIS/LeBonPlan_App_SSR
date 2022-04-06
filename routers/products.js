@@ -5,8 +5,20 @@ const router = express.Router();
 // MIDDLEWARES
 app.use(express.json());
 
-router.get("/products", (req, res) => {
+// PostGres
+const { Pool } = require("pg");
+const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+
+router.get("/", (req, res) => {
   res.render("products");
+});
+
+router.get("/cities/:city", async (req, res) => {
+  const product = await Postgres.query(
+    "SELECT * FROM products WHERE city='" + req.params.city + "'"
+  );
+  console.log("PRODUITS", product.rows[0]);
+  res.render("products", { prod: product.rows[0] });
 });
 
 module.exports = router;

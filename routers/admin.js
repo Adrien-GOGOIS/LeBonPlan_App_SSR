@@ -52,6 +52,7 @@ router.post("/", async (req, res) => {
       "INSERT INTO products(name, price, city, description, user_id) VALUES($1, $2, $3, $4, $5)",
       [name, price, city, description, userData.rows[0].user_id]
     );
+    res.json({ message: "Product added" });
   } catch (err) {
     console.log(err);
   }
