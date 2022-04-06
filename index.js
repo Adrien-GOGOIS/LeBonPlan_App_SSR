@@ -28,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 let log = false;
+let name = "";
 
 async function isLoggedIn(req, res, next) {
   try {
@@ -40,14 +41,13 @@ async function isLoggedIn(req, res, next) {
   const decoded = jwt.verify(req.cookies.jwtCookie, secret);
 
   const userData = await Postgres.query(
-    "SELECT isLoggedIn FROM users WHERE users.user_id=$1",
+    "SELECT * FROM users WHERE users.user_id=$1",
     [decoded.id]
   );
 
-  console.log(userData.rows[0].isloggedin);
-
-  if (userData) {
+  if (userData.rows[0].isloggedin) {
     log = true;
+    name = userData.rows[0].username;
   }
 
   next();
@@ -72,7 +72,7 @@ app.use("/signup", signup);
 app.use("/products", products);
 
 app.get("/", isLoggedIn, (req, res) => {
-  res.render("homepage", { isLoggedIn: log });
+  res.render("homepage", { isLoggedIn: log, username: name });
 });
 
 app.listen(8000, () => console.log("Listen on port 8000"));
