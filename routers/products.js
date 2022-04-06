@@ -21,4 +21,11 @@ router.get("/cities/:city", async (req, res) => {
   res.render("products", { prod: product.rows[0] });
 });
 
+router.get("/:id", async (req, res) => {
+  const product = await Postgres.query(
+    "SELECT * FROM products WHERE product_id='" + req.params.id + "'"
+  );
+  res.render("products", { prod: product.rows[0] });
+});
+
 module.exports = router;
