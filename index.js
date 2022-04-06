@@ -41,6 +41,7 @@ const login = require("./routers/login.js");
 const signup = require("./routers/signup.js");
 const profile = require("./routers/profile.js");
 const logout = require("./routers/logout");
+const admin = require("./routers/admin.js");
 
 // Routes de l'API
 app.use("/users", users);
@@ -49,6 +50,7 @@ app.use("/login", login);
 app.use("/signup", signup);
 app.use("/products", products);
 app.use("/logout", logout);
+app.use("/admin", admin);
 
 app.get("/", async (req, res) => {
   if (!req.cookies.jwtCookie) {
