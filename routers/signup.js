@@ -42,6 +42,11 @@ router.post("/", async (req, res) => {
       [req.body.username]
     );
 
+    await Postgres.query(
+      "UPDATE users SET isLoggedIn = true WHERE users.username=$1",
+      [req.body.username]
+    );
+
     const token = jwt.sign({ id: usr.rows[0].user_id }, secret);
     res.cookie("jwtCookie", token, {
       expires: new Date(Date.now() + 1000 * 60 * 60), // Expiration du token à 1h

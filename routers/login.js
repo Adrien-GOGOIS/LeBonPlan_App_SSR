@@ -16,6 +16,9 @@ app.set("view engine", "handlebars");
 const { Pool } = require("pg");
 const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
 
+// Code serveur
+const secret = process.env.SERVER_CODE;
+
 // MIDDLEWARES
 app.use(express.json());
 
@@ -51,9 +54,12 @@ router.post("/", async (req, res) => {
       secure: false,
     });
 
-    res.status(200).json({
-      message: "Auth cookie ready",
-    });
+    await Postgres.query(
+      "UPDATE users SET isLoggedIn = true WHERE users.username=$1",
+      [username]
+    );
+
+    res.redirect("/");
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: "An error happened" });

@@ -8,7 +8,12 @@
 </div>
 
 <div>
-  <a href="/login">Login</a>
-  <a href="/signup">Signup</a>
+  {{#if isLoggedIn}}
+    <a href="/logout">Logout</a>
+    <p>Name</p>
+  {{else}}
+    <a href="/login">Login</a>
+    <a href="/signup">Signup</a>
+  {{/if}}
 
 </div>
